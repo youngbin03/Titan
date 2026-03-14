@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ subject }}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; background: #0f0f13; color: #e2e8f0; }
+    .wrapper { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
+
+    /* Header */
+    .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid #2d3748; border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+    .header-logo { font-size: 22px; font-weight: 800; color: #a78bfa; letter-spacing: -0.5px; }
+    .header-logo span { color: #60a5fa; }
+    .header-subtitle { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    .header-date { font-size: 12px; color: #64748b; margin-top: 12px; }
+    .header-stats { display: flex; gap: 20px; margin-top: 16px; }
+    .stat { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px 16px; }
+    .stat-num { font-size: 20px; font-weight: 700; color: #a78bfa; }
+    .stat-label { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+
+    /* Signal Card */
+    .signal-card { background: #1a1a2e; border: 1px solid #2d3748; border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+    .signal-header { padding: 20px 24px 16px; border-bottom: 1px solid #2d3748; }
+    .signal-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+    .badge-high { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .badge-medium { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-low { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+    .signal-title { font-size: 16px; font-weight: 700; color: #f1f5f9; line-height: 1.4; }
+    .signal-meta { display: flex; align-items: center; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+    .prob-change { font-size: 13px; }
+    .prob-now { font-size: 18px; font-weight: 800; color: #60a5fa; }
+    .prob-delta { font-size: 13px; font-weight: 600; margin-left: 6px; }
+    .prob-delta.up { color: #34d399; }
+    .prob-delta.down { color: #f87171; }
+    .signal-score { font-size: 11px; background: rgba(167,139,250,0.1); color: #a78bfa; padding: 3px 8px; border-radius: 6px; }
+    .signal-url { font-size: 11px; color: #4ade80; text-decoration: none; }
+    .signal-url:hover { text-decoration: underline; }
+
+    /* Summary */
+    .summary-box { padding: 16px 24px; background: rgba(96,165,250,0.05); border-bottom: 1px solid #2d3748; }
+    .summary-box p { font-size: 13px; color: #cbd5e1; line-height: 1.6; }
+    .implication-box { padding: 12px 24px; background: rgba(167,139,250,0.05); border-bottom: 1px solid #2d3748; }
+    .implication-label { font-size: 11px; font-weight: 700; color: #a78bfa; margin-bottom: 4px; }
+    .implication-box p { font-size: 13px; color: #c4b5fd; line-height: 1.6; }
+
+    /* News */
+    .news-section { padding: 16px 24px; border-bottom: 1px solid #2d3748; }
+    .section-title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .news-item { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .news-item:last-child { border-bottom: none; }
+    .news-item a { font-size: 13px; color: #93c5fd; text-decoration: none; line-height: 1.4; display: block; }
+    .news-item a:hover { color: #60a5fa; }
+    .news-meta { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    /* Impact Table */
+    .impact-section { padding: 16px 24px; }
+    .impact-table { width: 100%; border-collapse: collapse; }
+    .impact-table th { text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 6px 0; border-bottom: 1px solid #2d3748; }
+    .impact-table td { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+    .impact-table tr:last-child td { border-bottom: none; }
+    .company-name { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+    .company-ko { font-size: 11px; color: #94a3b8; }
+    .impact-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .impact-positive { background: rgba(52,211,153,0.1); color: #34d399; }
+    .impact-negative { background: rgba(248,113,113,0.1); color: #f87171; }
+    .impact-neutral { background: rgba(148,163,184,0.1); color: #94a3b8; }
+    .impact-mixed { background: rgba(251,191,36,0.1); color: #fbbf24; }
+    .score-bar { display: flex; align-items: center; gap: 8px; }
+    .score-dots { display: flex; gap: 3px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-filled { background: #a78bfa; }
+    .dot-empty { background: #2d3748; }
+    .score-num { font-size: 12px; color: #94a3b8; }
+    .duration-badge { font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
+    .reasoning { font-size: 12px; color: #94a3b8; margin-top: 4px; line-height: 1.4; }
+
+    /* Footer */
+    .footer { background: #1a1a2e; border: 1px solid #2d3748; border-radius: 12px; padding: 20px 24px; margin-top: 20px; text-align: center; }
+    .footer p { font-size: 11px; color: #64748b; line-height: 1.7; }
+    .disclaimer { font-size: 10px; color: #475569; margin-top: 10px; line-height: 1.5; }
+    .divider { border: none; border-top: 1px solid #2d3748; margin: 8px 0; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo">TITAN <span>Signal</span></div>
+    <div class="header-subtitle">예측시장 기반 투자 이벤트 큐레이션</div>
+    <div class="header-date">{{ generated_at }}</div>
+    <div class="header-stats">
+      <div class="stat">
+        <div class="stat-num">{{ total_events }}</div>
+        <div class="stat-label">감지된 시그널</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ total_companies }}</div>
+        <div class="stat-label">영향 분석 기업</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ total_articles }}</div>
+        <div class="stat-label">수집된 뉴스</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signal Cards -->
+  {% for item in signal_items %}
+  <div class="signal-card">
+
+    <!-- Signal Header -->
+    <div class="signal-header">
+      {% if item.signal_score >= 70 %}
+      <div class="signal-badge badge-high">🔴 HIGH IMPACT</div>
+      {% elif item.signal_score >= 45 %}
+      <div class="signal-badge badge-medium">🟡 MEDIUM IMPACT</div>
+      {% else %}
+      <div class="signal-badge badge-low">🔵 WATCH</div>
+      {% endif %}
+      <div class="signal-title">{{ item.event_title }}</div>
+      <div class="signal-meta">
+        <div class="prob-change">
+          <span class="prob-now">{{ item.current_price }}%</span>
+          <span class="prob-delta {{ 'up' if item.price_delta > 0 else 'down' }}">
+            {{ '+' if item.price_delta > 0 else '' }}{{ item.price_delta }}%p (6h)
+          </span>
+        </div>
+        <div class="signal-score">Score: {{ item.signal_score }}</div>
+        {% if item.event_url %}<a href="{{ item.event_url }}" class="signal-url">Polymarket →</a>{% endif %}
+      </div>
+    </div>
+
+    <!-- Event Summary -->
+    {% if item.event_summary_ko %}
+    <div class="summary-box">
+      <p>{{ item.event_summary_ko }}</p>
+    </div>
+    {% endif %}
+
+    {% if item.investment_implication_ko %}
+    <div class="implication-box">
+      <div class="implication-label">💡 투자 시사점</div>
+      <p>{{ item.investment_implication_ko }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Related News -->
+    {% if item.articles %}
+    <div class="news-section">
+      <div class="section-title">📰 관련 뉴스</div>
+      {% for article in item.articles %}
+      <div class="news-item">
+        <a href="{{ article.url }}">{{ article.title }}</a>
+        <div class="news-meta">{{ article.source }} · {{ article.published_ago }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Company Impact Table -->
+    {% if item.impacts %}
+    <div class="impact-section">
+      <div class="section-title">📊 기업 영향 분석</div>
+      <table class="impact-table">
+        <thead>
+          <tr>
+            <th style="width:28%">기업</th>
+            <th style="width:18%">영향</th>
+            <th style="width:22%">강도</th>
+            <th style="width:12%">기간</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for impact in item.impacts %}
+          <tr>
+            <td>
+              <div class="company-name">{{ impact.ticker }}</div>
+              <div class="company-ko">{{ impact.company_ko }}</div>
+            </td>
+            <td>
+              <span class="impact-badge impact-{{ impact.impact_type }}">
+                {{ impact.impact_emoji }} {{ impact.impact_label }}
+              </span>
+            </td>
+            <td>
+              <div class="score-bar">
+                <div class="score-dots">
+                  {% for i in range(10) %}
+                  <div class="dot {{ 'dot-filled' if i < impact.impact_score else 'dot-empty' }}"></div>
+                  {% endfor %}
+                </div>
+                <span class="score-num">{{ impact.impact_score }}/10</span>
+              </div>
+              {% if impact.reasoning_ko %}
+              <div class="reasoning">{{ impact.reasoning_ko }}</div>
+              {% endif %}
+            </td>
+            <td>
+              <span class="duration-badge">{{ impact.duration_label }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>TITAN Signal은 예측시장 데이터 기반의 투자 정보 서비스입니다.</p>
+    <hr class="divider">
+    <p class="disclaimer">
+      ⚠️ 본 이메일의 내용은 투자 참고 정보이며, 투자 권유가 아닙니다.<br>
+      모든 투자 결정은 본인의 판단과 책임 하에 이루어져야 합니다.<br>
+      AI 기반 분석은 오류를 포함할 수 있으며 금융 전문가의 조언을 대체하지 않습니다.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

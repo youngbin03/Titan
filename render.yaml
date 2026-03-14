@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: titan-signal
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py serve 8000
+    plan: free
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_TO
+        sync: false
+      - key: NEWSAPI_KEY
+        sync: false
+      - key: NAVER_CLIENT_ID
+        sync: false
+      - key: NAVER_CLIENT_SECRET
+        sync: false
+      - key: SIGNAL_SCORE_THRESHOLD
+        value: "30"
+      - key: MAX_EVENTS_PER_EMAIL
+        value: "5"
+      - key: OUTPUT_DIR
+        value: "/tmp/output"
+      - key: DATABASE_URL
+        value: "sqlite+aiosqlite:////data/titan_signal.db"
+    disk:
+      name: titan-data
+      mountPath: /data
+      sizeGB: 1

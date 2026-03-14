@@ -13,7 +13,6 @@ aiosqlite==0.20.0
 
 # NLP / Embeddings
 openai==1.58.1
-spacy==3.8.7
 
 
 # LLM

@@ -133,7 +133,7 @@ def main():
     command = args[0] if args else "serve"
 
     if command == "serve":
-        port = int(args[1]) if len(args) > 1 else 8000
+        port = int(args[1]) if len(args) > 1 else int(os.environ.get("PORT", 8000))
         asyncio.run(cmd_serve(port=port))
     elif command == "run":
         asyncio.run(cmd_run())

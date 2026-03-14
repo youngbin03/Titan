@@ -3,7 +3,7 @@ services:
     name: titan-signal
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python main.py serve 8000
+    startCommand: python main.py serve
     plan: free
     envVars:
       - key: ANTHROPIC_API_KEY
